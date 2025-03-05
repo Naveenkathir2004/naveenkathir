@@ -1,54 +1,172 @@
 
 import { Product, Review } from "@/types";
 
-// This is a mock service since we can't actually scrape from the frontend
-// In a real application, this would be a backend service or API call
-
+// This is a mock service for frontend demonstration
+// In a real-world application, scraping would happen on a server-side
 export async function validateAmazonUrl(url: string): Promise<boolean> {
   const amazonRegex = /^https?:\/\/(www\.)?amazon\.(com|co\.uk|ca|de|fr|it|es|co\.jp|in)\/.*$/;
-  return amazonRegex.test(url);
+  
+  try {
+    // Simulate validation checks
+    console.log(`Validating URL: ${url}`);
+    await new Promise(resolve => setTimeout(resolve, 500)); // Simulate network delay
+    return amazonRegex.test(url);
+  } catch (error) {
+    console.error("Error validating URL:", error);
+    return false;
+  }
 }
 
 export async function scrapeProductDetails(url: string): Promise<Product> {
-  // In a real app, this would call a backend API
-  // For now, we'll simulate a delay and return mock data
-  await new Promise(resolve => setTimeout(resolve, 1500));
+  console.log(`Scraping product details from: ${url}`);
   
-  // Get a consistent ID from the URL (for demo purposes)
-  const id = generateIdFromUrl(url);
+  try {
+    // Simulate network request time
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    // Extract ASIN or other identifier from URL (for mock purposes)
+    const id = generateIdFromUrl(url);
+    
+    // Simulate different products based on URL
+    const productCategory = getProductCategory(url);
+    
+    return generateMockProduct(id, url, productCategory);
+  } catch (error) {
+    console.error("Error scraping product details:", error);
+    throw new Error("Failed to scrape product details");
+  }
+}
+
+export async function scrapeProductReviews(productId: string): Promise<Review[]> {
+  console.log(`Scraping reviews for product ID: ${productId}`);
+  
+  try {
+    // Simulate a realistic delay for scraping multiple pages of reviews
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
+    // Generate deterministic but varied reviews based on the product ID
+    return generateMockReviews(productId);
+  } catch (error) {
+    console.error("Error scraping product reviews:", error);
+    throw new Error("Failed to scrape product reviews");
+  }
+}
+
+// Helper function to determine a mock product category based on URL
+function getProductCategory(url: string): string {
+  const urlLower = url.toLowerCase();
+  
+  if (urlLower.includes("electronics") || urlLower.includes("kindle") || urlLower.includes("phone")) {
+    return "electronics";
+  } else if (urlLower.includes("book") || urlLower.includes("author")) {
+    return "books";
+  } else if (urlLower.includes("kitchen") || urlLower.includes("home")) {
+    return "home";
+  } else if (urlLower.includes("fashion") || urlLower.includes("clothing") || urlLower.includes("shoes")) {
+    return "fashion";
+  } else {
+    return "general";
+  }
+}
+
+// Helper function to generate mock product data
+function generateMockProduct(id: string, url: string, category: string): Product {
+  const productTemplates: Record<string, Partial<Product>> = {
+    electronics: {
+      title: "Apple AirPods Pro (2nd Generation) Wireless Earbuds",
+      description: "The Apple AirPods Pro (2nd generation) deliver up to 2x more Active Noise Cancellation than the previous generation. A single charge delivers up to 6 hours of battery life with Active Noise Cancellation turned on.",
+      price: "$249.99",
+      rating: 4.7,
+      totalReviews: 31586,
+      imageUrl: "https://m.media-amazon.com/images/I/71zny7BTRlL._AC_SL1500_.jpg",
+      additionalImages: [
+        "https://m.media-amazon.com/images/I/71bhWgQK-cL._AC_SL1500_.jpg",
+        "https://m.media-amazon.com/images/I/81gVVu8eEPL._AC_SL1500_.jpg"
+      ],
+      features: [
+        "Active Noise Cancellation reduces unwanted background noise",
+        "Adaptive Transparency lets outside sounds in while reducing loud environmental noise",
+        "Personalized Spatial Audio with dynamic head tracking places sound all around you"
+      ]
+    },
+    books: {
+      title: "Atomic Habits: An Easy & Proven Way to Build Good Habits & Break Bad Ones",
+      description: "No matter your goals, Atomic Habits offers a proven framework for improving--every day. James Clear, one of the world's leading experts on habit formation, reveals practical strategies that will teach you exactly how to form good habits, break bad ones, and master the tiny behaviors that lead to remarkable results.",
+      price: "$14.99",
+      rating: 4.8,
+      totalReviews: 87392,
+      imageUrl: "https://m.media-amazon.com/images/I/81wgcld4wxL._AC_UY436_QL65_.jpg",
+      features: [
+        "New York Times bestseller with over 10 million copies sold",
+        "Available in multiple formats: hardcover, paperback, audiobook, and Kindle",
+        "Translated into over 50 languages worldwide"
+      ]
+    },
+    home: {
+      title: "Ninja AF101 Air Fryer, 4 Qt, Black/gray",
+      description: "The Ninja AF101 Air Fryer that Crisps, Roasts, Reheats, & Dehydrates with 4 Quart Capacity, and a High Gloss Finish, Black/Gray",
+      price: "$89.99",
+      rating: 4.6,
+      totalReviews: 45893,
+      imageUrl: "https://m.media-amazon.com/images/I/71+8uTMDRFL._AC_SL1500_.jpg",
+      additionalImages: [
+        "https://m.media-amazon.com/images/I/81B6JxFGv4L._AC_SL1500_.jpg",
+        "https://m.media-amazon.com/images/I/81Zx-bFIwXL._AC_SL1500_.jpg"
+      ],
+      features: [
+        "Wide temperature range: 105°F–400°F",
+        "4-quart ceramic-coated nonstick basket and crisper plate",
+        "Multi-layer rack to increase dehydrating capacity"
+      ]
+    },
+    fashion: {
+      title: "Levi's Men's 505 Regular Fit Jeans",
+      description: "These men's jeans sit at the waist and feature a regular fit through the seat and thigh with a straight leg. Sits at waist, regular fit through thigh. Made with 100% cotton.",
+      price: "$59.99",
+      rating: 4.5,
+      totalReviews: 23457,
+      imageUrl: "https://m.media-amazon.com/images/I/61N2z21dS3L._AC_UX679_.jpg",
+      features: [
+        "Regular fit jeans",
+        "Sits at waist",
+        "Straight leg"
+      ]
+    },
+    general: {
+      title: "Amazon Basics Vacuum Compression Storage Bags with Hand Pump",
+      description: "Space-saving storage bags for efficiently storing clothes, bedding, curtains, towels and more; ideal for closets, attics, bedrooms, and luggage.",
+      price: "$19.99",
+      rating: 4.3,
+      totalReviews: 12645,
+      imageUrl: "https://m.media-amazon.com/images/I/71K5hsFBlbL._AC_SL1500_.jpg",
+      features: [
+        "Reduces storage space by up to 80%",
+        "Includes hand pump for air removal",
+        "Made of durable, flexible plastic with double-zip seal"
+      ]
+    }
+  };
+  
+  const template = productTemplates[category] || productTemplates.general;
+  
+  // Modify the template slightly for variation
+  const lastDigit = id.slice(-1);
   
   return {
     id,
-    title: "Apple AirPods Pro (2nd Generation) Wireless Earbuds",
-    description: "The Apple AirPods Pro (2nd generation) deliver up to 2x more Active Noise Cancellation than the previous generation. A single charge delivers up to 6 hours of battery life with Active Noise Cancellation turned on. The charging case provides up to 30 hours total listening time with Active Noise Cancellation turned on.",
-    price: "$249.99",
-    rating: 4.7,
-    totalReviews: 31586,
-    imageUrl: "https://m.media-amazon.com/images/I/71zny7BTRlL._AC_SL1500_.jpg",
-    additionalImages: [
-      "https://m.media-amazon.com/images/I/71bhWgQK-cL._AC_SL1500_.jpg",
-      "https://m.media-amazon.com/images/I/81gVVu8eEPL._AC_SL1500_.jpg",
-      "https://m.media-amazon.com/images/I/71zcbXRRMYL._AC_SL1500_.jpg"
-    ],
-    features: [
-      "Active Noise Cancellation reduces unwanted background noise",
-      "Adaptive Transparency lets outside sounds in while reducing loud environmental noise",
-      "Personalized Spatial Audio with dynamic head tracking places sound all around you",
-      "Multiple ear tips including XS, S, M, L"
-    ],
+    title: template.title || "Amazon Product",
+    description: template.description || "No description available",
+    price: template.price || "$0.00",
+    rating: (template.rating || 4) + (parseInt(lastDigit) / 20) - 0.25,
+    totalReviews: template.totalReviews || 1000 + parseInt(lastDigit) * 100,
+    imageUrl: template.imageUrl || "https://via.placeholder.com/300",
+    additionalImages: template.additionalImages || [],
+    features: template.features || [],
     url
   };
 }
 
-export async function scrapeProductReviews(productId: string): Promise<Review[]> {
-  // Simulate network delay
-  await new Promise(resolve => setTimeout(resolve, 2000));
-  
-  // Generate deterministic but varied reviews based on the product ID
-  return generateMockReviews(productId);
-}
-
-// Helper functions for the mock service
+// Helper functions for generating deterministic mock data
 function generateIdFromUrl(url: string): string {
   // Extract a simple hash from the URL for demo purposes
   let hash = 0;
@@ -128,22 +246,31 @@ function generateMockReviews(productId: string): Review[] {
   const authorSuffixes = productId.split('').map(char => char.charCodeAt(0));
   
   // Create 20 reviews by duplicating and slightly modifying the templates
-  return Array(20).fill(null).map((_, index) => {
-    const template = reviewTemplates[index % reviewTemplates.length];
-    const suffix = authorSuffixes[index % authorSuffixes.length];
+  const reviews = [];
+  
+  // Add some randomness to the number of reviews (15-25)
+  const numReviews = 15 + Math.floor((parseInt(productId.substring(0, 1), 16) % 10));
+  
+  for (let i = 0; i < numReviews; i++) {
+    const template = reviewTemplates[i % reviewTemplates.length];
+    const suffix = authorSuffixes[i % authorSuffixes.length];
     
     // Generate semi-random date in the last 3 months
     const date = new Date();
-    date.setDate(date.getDate() - (index * 4) - Math.floor(Math.random() * 10));
+    date.setDate(date.getDate() - (i * 4) - Math.floor(Math.random() * 10));
     
-    return {
-      id: `review-${productId}-${index}`,
-      author: `Customer${suffix}${index}`,
+    // Create a variation of the review based on the template
+    reviews.push({
+      id: `review-${productId}-${i}`,
+      author: `Customer${suffix}${i}`,
       date: date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
-      rating: template.rating,
-      title: template.title,
-      content: template.content + (index % 3 === 0 ? " Really impressed overall!" : ""),
-      helpful: template.helpful + (index * 2)
-    };
-  });
+      rating: i === 0 ? template.rating : Math.max(1, Math.min(5, template.rating + (i % 3 - 1))),
+      title: template.title + (i % 5 === 0 ? " - Updated" : ""),
+      content: template.content + (i % 3 === 0 ? " Really impressed overall!" : ""),
+      helpful: template.helpful + (i * 2)
+    });
+  }
+  
+  return reviews;
 }
+
